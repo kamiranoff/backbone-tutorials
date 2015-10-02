@@ -1,0 +1,21 @@
+{
+  "name": "backbone-tutorials",
+  "version": "0.0.0",
+  "authors": [
+    "Kevin Amiranoff <kamiranoff@gmail.com>"
+  ],
+  "description": "backbone tutorials",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "underscore": "~1.8.3",
+    "backbone": "~1.2.3",
+    "jquery": "~2.1.4"
+  }
+}
