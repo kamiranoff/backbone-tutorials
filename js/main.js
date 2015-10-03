@@ -24,6 +24,10 @@ PersonVanilla.prototype.work = function() {
   return this.name + 'is working';
 };
 
+PersonVanilla.prototype.nameAndOccupation = function() {
+  return this.get('name') + ' ' + this.get('occupation');
+};
+
 /*=====  End of  MODEL - JS VERSION  ======*/
 
 
@@ -48,15 +52,18 @@ PersonVanilla.prototype.work = function() {
  *overrides defaults properties like so:
  *var person = new({name:'Kevin',age:'25'})
  *
+ *
+ *
+ *
+ * .toJSON();
  * to access the properties use the toJSON method;
- * person.toJSON();
  *
  *
- * validate method is called on save.
+ * validate method
+ * Called on save.
  * to call this method on the set method pass it as an option
  * EX :
  * /person.set({age:-12},{validate:true})
- *
  *
  *
  */
@@ -66,10 +73,6 @@ var PersonBackbone = Backbone.Model.extend({
     name: 'Jhon Doe',
     age: 30,
     occupation: 'Developer'
-  },
-  //Adds a method to the prototype
-  work: function() {
-    return this.name + 'is working';
   },
 
   validate: function(attrs) {
@@ -86,7 +89,14 @@ var PersonBackbone = Backbone.Model.extend({
     if (!attrs.name) { //check if attrs.name is falsy
       return 'Every person must have a name';
     }
+  },
 
+  work: function() { //Adds a method to the prototype
+    return this.name + 'is working';
+  },
+
+  nameAndOccupation: function() { //another custom method
+    return this.get('name') + ' ' + this.get('occupation');
   }
 });
 
@@ -107,9 +117,12 @@ var PersonBackbone = Backbone.Model.extend({
  *
  */
 
-// var PeopleCollection = Backbone.Collection.extend({
-//   model: PersonBackbone // ATTENTION: The model is passed in.
-// });
+var PeopleCollection = Backbone.Collection.extend({
+  model: PersonBackbone // ATTENTION: The model is passed in.
+});
+
+
+
 
 
 /*=====  End of BACKBONE COLLECTION  ======*/
@@ -119,36 +132,186 @@ var PersonBackbone = Backbone.Model.extend({
 /*=====================================
 =            BACKBONE VIEW            =
 =====================================*/
+
+/**
+ *
+ * View for all people
+ *
+ */
+var PeopleBackboneView = Backbone.View.extend({
+  tagName: 'ul',
+
+  initialize: function() {
+    console.log('PeopleBackboneView - initialize - this.collection', this.collection); //We have access to the collection within this view
+  },
+  render: function() {
+    //1.filter through all items in a collection
+    //2.for each, create a new PersonBackboneView
+    //3.append to root element
+
+
+    //1.filter through all items in a collection
+
+    //Native underscore way
+    _.each(this.collection.models, function(index) {
+      console.log('PeopleBackboneView - _.each on this.collection', index.attributes.name);
+    });
+
+    //Native Backbone way
+    /**
+     *
+     * By default this refers to window unless passed in as the context in the argument
+     * of the .each method so it refers to the view
+     *
+     */
+    this.collection.each(function(person) { //passed in the model. this is equal to this.collection.each(function(model){
+      console.log(this);//Be careful to pass this as the context so it refers to the view
+      console.log('PeopleBackboneView - backbone .each on this.collection', person.attributes.name);
+
+      //2.for each, create a new PersonBackboneView
+      var personBackboneView = new PersonBackboneView({
+        model: person
+      });
+
+
+
+      //3.append to root element
+      /**
+       *
+       * chaining render() is possible cause this is return from the render method in the PersonBackboneView
+       * now the render() return the View Instance
+       * So we can call the el method to get its content
+       */
+      this.$el.append(personBackboneView.render().el); //appends personBackboneView el into PeopleBackboneView root el
+      console.log('personBackboneView.el',personBackboneView.el);
+    },this);//passing this here allows to refer this to the view. Otherwise this is attached to window
+
+
+    return this; //always return this to the render method;
+  }
+});
+
+
+/**
+ *
+ * View for a single Person
+ *
+ */
 var PersonBackboneView = Backbone.View.extend({
   tagName: 'li', //default is div
   className: 'person', //define a class
-  id: 'some-person', //define a id
 
   //template:_.template("<strong><%= name %></strong> (<%= age %> - <%= occupation %>)"),//templating with underscore calling the _.template() function
-  template:_.template($('#personTemplate').html()), //get template from html
-  initialize: function() { //Constructor method. Executed when the class is instanciated
-    console.log('Initialize automatically run when the class is instantiated');
-    console.log('this.model - inside the view Class',this.model);//Comes from the model that is been passed when this Class is instantiated
+  template: _.template($('#personTemplate').html()), //get template from html
 
-    this.render();//Allow the render method to be called when a new instance is created
+  initialize: function() { //Constructor method. Executed when the class is instanciated
+    console.log('PersonBackboneView - Initialize automatically run when the class is instantiated');
+    console.log('PersonBackboneView - this.model', this.model); //Comes from the model that is been passed when this Class is instantiated
+
+    /**
+     *
+     * the render method is called directly from the PeopleBackboneView Class
+     *
+     */
+    //this.render(); //Allow the render method to be called when a new instance is created
   },
 
-  render: function() {// Method that groups the template with the associated data
-    this.$el.html(this.template(this.model.toJSON()));//
+  /**
+   *
+   * return this allows to continue chaining
+   *
+   */
+
+  render: function() { // Method that groups the template with the associated data
+    this.$el.html(this.template(this.model.toJSON())); //
+    return this;
   }
 
 });
 
-var personBackbone = new PersonBackbone();//new instance of the Model
-var personView = new PersonBackboneView({model:personBackbone});//new Instance of the View with an instance of a model passed in.
 
-//var peopleCollection = new PeopleCollection(); //new instance of the collection
+/*=====  End of BACKBONE VIEW  ======*/
+
+
+
+/*----------  Collections usage  ----------*/
+
+/**
+ *
+ * We can either pass an instance of a model to a collection
+ *
+ * or we can pass a array of models
+ * Because we specified a model when creating the class PeopleCollection
+ * Backbone knows that the arrays passed in represents instances of the Model
+ *
+ *
+ */
+var peopleCollection = new PeopleCollection([{ //new instance of the collection
+  name: 'Kevin',
+  age: 24,
+}, {
+  name: 'Betsy Badrock',
+  age: 27,
+  occupation: 'SuperHero'
+}, {
+  name: 'Jenifer',
+  age: 27,
+  occupation: 'Singer'
+}]);
+
+
+
+var modelOftheCollection = peopleCollection.at(0);
+console.log('modelOftheCollection.get("name")', modelOftheCollection.get('name')); //modelOftheCollection inherits from PersonBackbone.
+console.log('modelOftheCollection.nameAndOccupation()', modelOftheCollection.nameAndOccupation()); //example of using a method from PersonBackbone.
 //peopleCollection.add(personBackbone);//adds a model into the collection
 
+console.log('peopleCollection', peopleCollection);
 
-var personBackbone2 = new PersonBackbone({name:'Kevin',age:'25'});//Passes in custom data
-var personView2 = new PersonBackboneView({model:personBackbone2});
+/*----------  !Collections usage  ----------*/
 
-console.log('personView.el',personView.el); //tagName element
-console.log('personView.$el',personView.$el); //jquery tagName element
-/*=====  End of BACKBONE VIEW  ======*/
+
+
+
+
+
+/*----------  New instances of the Model and the View  ----------*/
+
+var personBackbone = new PersonBackbone(); //new instance of the Model
+var personView = new PersonBackboneView({
+  model: personBackbone
+}); //new Instance of the View with an instance of a model passed in.
+
+console.log('personView.el', personView.el); //tagName element
+console.log('personView.$el', personView.$el); //jquery tagName element
+
+
+var personBackbone2 = new PersonBackbone({
+  name: 'Kevin',
+  age: '25'
+}); //Passes in custom data
+var personView2 = new PersonBackboneView({
+  model: personBackbone2
+});
+
+/*----------  !New instances of the Model and the View  ----------*/
+
+
+
+
+
+
+/*----------  New instances of the View with a collection  ----------*/
+var peopleView = new PeopleBackboneView({
+  collection: peopleCollection
+});
+
+
+/**
+ *  Calling render() from PeopleBackboneView
+ * render().el is defined because we return this from the render method
+ * inside the PeopleBackboneView class
+ *
+ */
+$(document.body).append(peopleView.render().el);
+/*----------  !New instances of the View with a collection  ----------*/
