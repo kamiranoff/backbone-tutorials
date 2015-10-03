@@ -1,3 +1,4 @@
+//Watching TutsPlus - Connected to the Backbone (2012) - Video 08 - collection
 /*===========================================
 =             MODEL - JS VERSION            =
 ============================================*/
@@ -28,10 +29,12 @@ PersonVanilla.prototype.work = function() {
 
 
 /*================================================
-=            MODEL - BACKBONE VERSIOn            =
+=            MODEL - BACKBONE VERSION            =
 ================================================*/
 
 /**
+ *
+ * A Model represent one item. in this case a person
  *
  * defaults attaches defautls properties to the attributes Object.
  * to get properties use the .get() helper method.
@@ -39,11 +42,11 @@ PersonVanilla.prototype.work = function() {
  * var person = new PersonBackbone();
  * person.get('age')
  *To override the properties use the .set() helper method
- *person.set({age:'younger'})
+ *person.set({age:'25'})
  *
  *
  *overrides defaults properties like so:
- *var person = new({name:'Kevin',age:'young'})
+ *var person = new({name:'Kevin',age:'25'})
  *
  * to access the properties use the toJSON method;
  * person.toJSON();
@@ -90,6 +93,29 @@ var PersonBackbone = Backbone.Model.extend({
 /*=====  End of MODEL - BACKBONE VERSION  ======*/
 
 
+
+/*===========================================
+=            BACKBONE COLLECTION            =
+===========================================*/
+/**
+ *
+ * A collection is a list of Models
+ * In this case, people
+ * A collection expect a Model while a view expect an instance of a Model
+ *
+ *
+ *
+ */
+
+// var PeopleCollection = Backbone.Collection.extend({
+//   model: PersonBackbone // ATTENTION: The model is passed in.
+// });
+
+
+/*=====  End of BACKBONE COLLECTION  ======*/
+
+
+
 /*=====================================
 =            BACKBONE VIEW            =
 =====================================*/
@@ -98,8 +124,8 @@ var PersonBackboneView = Backbone.View.extend({
   className: 'person', //define a class
   id: 'some-person', //define a id
 
-  template:_.template("<strong><%= name %></strong> (<%= age %> - <%= occupation %>)"),//templating with underscore calling the _.template() function
-
+  //template:_.template("<strong><%= name %></strong> (<%= age %> - <%= occupation %>)"),//templating with underscore calling the _.template() function
+  template:_.template($('#personTemplate').html()), //get template from html
   initialize: function() { //Constructor method. Executed when the class is instanciated
     console.log('Initialize automatically run when the class is instantiated');
     console.log('this.model - inside the view Class',this.model);//Comes from the model that is been passed when this Class is instantiated
@@ -114,7 +140,14 @@ var PersonBackboneView = Backbone.View.extend({
 });
 
 var personBackbone = new PersonBackbone();//new instance of the Model
-var personView = new PersonBackboneView({model:personBackbone});//new instance of the View with the model passed in.
+var personView = new PersonBackboneView({model:personBackbone});//new Instance of the View with an instance of a model passed in.
+
+//var peopleCollection = new PeopleCollection(); //new instance of the collection
+//peopleCollection.add(personBackbone);//adds a model into the collection
+
+
+var personBackbone2 = new PersonBackbone();
+var personView2 = new PersonBackboneView({name:'Kevin',age:'25'});
 
 console.log('personView.el',personView.el); //tagName element
 console.log('personView.$el',personView.$el); //jquery tagName element
