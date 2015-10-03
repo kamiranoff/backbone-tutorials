@@ -146,8 +146,8 @@ var personView = new PersonBackboneView({model:personBackbone});//new Instance o
 //peopleCollection.add(personBackbone);//adds a model into the collection
 
 
-var personBackbone2 = new PersonBackbone();
-var personView2 = new PersonBackboneView({name:'Kevin',age:'25'});
+var personBackbone2 = new PersonBackbone({name:'Kevin',age:'25'});//Passes in custom data
+var personView2 = new PersonBackboneView({model:personBackbone2});
 
 console.log('personView.el',personView.el); //tagName element
 console.log('personView.$el',personView.$el); //jquery tagName element
