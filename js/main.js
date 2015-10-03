@@ -32,6 +32,18 @@ PersonVanilla.prototype.nameAndOccupation = function() {
 
 
 
+/*========================================
+=            HELPER FUNCTIONS            =
+========================================*/
+var template = function(id){
+  return _.template($('#' + id).html());
+};
+
+/*=====  End of HELPER FUNCTIONS  ======*/
+
+
+
+
 /*================================================
 =            MODEL - BACKBONE VERSION            =
 ================================================*/
@@ -202,7 +214,7 @@ var PersonBackboneView = Backbone.View.extend({
   className: 'person', //define a class
 
   //template:_.template("<strong><%= name %></strong> (<%= age %> - <%= occupation %>)"),//templating with underscore calling the _.template() function
-  template: _.template($('#personTemplate').html()), //get template from html
+  template: template('personTemplate'), //get template from html. template() is a helper function defined above
 
   initialize: function() { //Constructor method. Executed when the class is instanciated
     console.log('PersonBackboneView - Initialize automatically run when the class is instantiated');
