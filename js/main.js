@@ -32,14 +32,34 @@ PersonVanilla.prototype.nameAndOccupation = function() {
 
 
 
-/*========================================
-=            HELPER FUNCTIONS            =
-========================================*/
-var template = function(id){
+
+
+
+
+/*=================================
+=            NAMESPACE            =
+=================================*/
+
+(function(){
+
+
+window.App = {
+  Models:{},
+  Views:{},
+  Collections:{}
+};
+
+//template helper function
+window.template = function(id){
   return _.template($('#' + id).html());
 };
 
-/*=====  End of HELPER FUNCTIONS  ======*/
+
+
+/*=====  End of NAMESPACE  ======*/
+
+
+
 
 
 
@@ -80,7 +100,7 @@ var template = function(id){
  *
  */
 
-var PersonBackbone = Backbone.Model.extend({
+App.Models.PersonBackbone = Backbone.Model.extend({
   defaults: {
     name: 'Jhon Doe',
     age: 30,
@@ -129,8 +149,8 @@ var PersonBackbone = Backbone.Model.extend({
  *
  */
 
-var PeopleCollection = Backbone.Collection.extend({
-  model: PersonBackbone // ATTENTION: The model is passed in.
+App.Collections.PeopleCollection = Backbone.Collection.extend({
+  model: App.Models.PersonBackbone // ATTENTION: The model is passed in.
 });
 
 
@@ -150,7 +170,7 @@ var PeopleCollection = Backbone.Collection.extend({
  * View for all people
  *
  */
-var PeopleBackboneView = Backbone.View.extend({
+App.Views.PeopleBackboneView = Backbone.View.extend({
   tagName: 'ul',
 
   initialize: function() {
@@ -181,7 +201,7 @@ var PeopleBackboneView = Backbone.View.extend({
       console.log('PeopleBackboneView - backbone .each on this.collection', person.attributes.name);
 
       //2.for each, create a new PersonBackboneView
-      var personBackboneView = new PersonBackboneView({
+      var personBackboneView = new App.Views.PersonBackboneView({
         model: person
       });
 
@@ -209,7 +229,7 @@ var PeopleBackboneView = Backbone.View.extend({
  * View for a single Person
  *
  */
-var PersonBackboneView = Backbone.View.extend({
+App.Views.PersonBackboneView = Backbone.View.extend({
   tagName: 'li', //default is div
   className: 'person', //define a class
 
@@ -258,7 +278,7 @@ var PersonBackboneView = Backbone.View.extend({
  *
  *
  */
-var peopleCollection = new PeopleCollection([{ //new instance of the collection
+peopleCollection = new App.Collections.PeopleCollection([{ //new instance of the collection
   name: 'Kevin',
   age: 24,
 }, {
@@ -289,8 +309,8 @@ console.log('peopleCollection', peopleCollection);
 
 /*----------  New instances of the Model and the View  ----------*/
 
-var personBackbone = new PersonBackbone(); //new instance of the Model
-var personView = new PersonBackboneView({
+var personBackbone = new App.Models.PersonBackbone(); //new instance of the Model
+var personView = new App.Views.PersonBackboneView({
   model: personBackbone
 }); //new Instance of the View with an instance of a model passed in.
 
@@ -298,11 +318,11 @@ console.log('personView.el', personView.el); //tagName element
 console.log('personView.$el', personView.$el); //jquery tagName element
 
 
-var personBackbone2 = new PersonBackbone({
+var personBackbone2 = new App.Models.PersonBackbone({
   name: 'Kevin',
   age: '25'
 }); //Passes in custom data
-var personView2 = new PersonBackboneView({
+var personView2 = new App.Views.PersonBackboneView({
   model: personBackbone2
 });
 
@@ -314,7 +334,7 @@ var personView2 = new PersonBackboneView({
 
 
 /*----------  New instances of the View with a collection  ----------*/
-var peopleView = new PeopleBackboneView({
+var peopleView = new App.Views.PeopleBackboneView({
   collection: peopleCollection
 });
 
@@ -327,3 +347,5 @@ var peopleView = new PeopleBackboneView({
  */
 $(document.body).append(peopleView.render().el);
 /*----------  !New instances of the View with a collection  ----------*/
+
+})();
