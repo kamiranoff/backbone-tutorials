@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title></title>
+</head>
+
+<body>
+  <h1>My Tasks</h1>
+  <form id="addTask" action="#">
+    <input type="text" placeholder="text">
+    <input type="submit" value="add Task">
+  </form>
+  <div class='tasks'></div>
+  <!--  type="text/template" prevent the script to be interpreted as javascript -->
+
+
+  <script id="taskTemplate" type="text/template">
+    <span><%= title %></span> <button class="edit" >Edit</button> <button class="delete" type="">Delete</button>
+  </script>
+
+<!--   <script src="../helpers/StringUtils.js"></script>
+  <script src="../helpers/Logger.js"></script> -->
+  <script src="../bower_components/underscore/underscore.js"></script>
+  <script src="../bower_components/jquery/dist/jquery.js"></script>
+  <script src="../bower_components/backbone/backbone.js"></script>
+  <script src="js/main.js"></script>
+</body>
+
+</html>

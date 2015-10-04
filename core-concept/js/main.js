@@ -1,4 +1,3 @@
-//Watching TutsPlus - Connected to the Backbone (2012) - Video 08 - collection
 /*===========================================
 =             MODEL - JS VERSION            =
 ============================================*/
