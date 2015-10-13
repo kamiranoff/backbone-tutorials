@@ -1,0 +1,31 @@
+{
+  "name": "Congo",
+  "version": "0.1.0",
+  "author": "Rob Conery, Tekpub <rob@tekpub.com>",
+  "description": "A MongoDB Explorer written in Backbone using Twitter Bootstrap. Part of Tekpub's Backbone series",
+  "contributors": [ 
+    {
+      "name": "Rob Conery",
+      "email": "rob@tekpub.com"
+    } 
+  ],  
+  "main": "./server.js",  
+  "keywords": [
+    "tekpub",
+    "backbone",
+    "mongodb",
+    "node",
+    "express"
+  ],
+  "dependencies" : {
+    "express": "2.5.7",
+    "jade": ">= 0.0.1",
+    "mongoskin" : "0.4.4",
+    "underscore" : "1.4.2"
+  },
+  "noAnalyze": true,
+  "license": "NewBSD",
+  "engines": {
+    "node": ">=0.6.14"
+  }
+}
